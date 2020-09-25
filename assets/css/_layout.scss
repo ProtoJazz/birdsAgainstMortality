@@ -1,0 +1,83 @@
+html,
+body{
+  width: 100%;
+  height: 100%;
+  background: var(--color-white) !important;
+  color: var(--color-black) !important;
+}
+
+html{
+  // font-size: 62.5% !important;
+}
+
+body {
+  color: var(--color-black) !important;
+  font-size: 1.6rem;
+
+  & > div{
+    height: 100%;
+
+    & > div{
+      height: 100%;
+    }
+  }
+}
+
+main{
+  height: 100%;
+  display: flex !important;
+  justify-content: flex-start;
+  align-items: stretch;
+  flex-direction: column;
+}
+
+.bam{
+
+  &__game-area{
+    display: flex !important;
+    align-self: stretch;
+    flex: 1 1 100%;
+
+  }
+
+  &__current-cards{
+    flex: 1 1 100%;
+  }
+
+  &__board{
+    flex: 1 1 auto;
+    background: var(--color-white);
+    border: 1px solid var(--color-black);
+    border-right: 0;
+    border-top: 0;
+    padding: 24px;
+    height: 100%;
+    align-self: stretch;
+  }
+
+  &__sidebar{
+    min-width: 350px;
+    height: 100%;
+    background: var(--color-white);
+    border: 1px solid var(--color-black);
+    border-top: 0;
+    display: block;
+  }
+
+  &__cards-in-play{
+    display: flex;
+    padding: 0 24px;
+  }
+
+  &__my-hand{
+    padding: 24px 0;
+    margin-top: 24px;
+    border-top: 1px solid var(--color-grey);
+
+    .cards{
+      display: flex;
+      flex-wrap: wrap;
+    }
+  }
+}
+

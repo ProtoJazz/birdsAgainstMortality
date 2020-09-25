@@ -1,0 +1,47 @@
+<h2><%= @title %></h2>
+<form class="ui form" phx-submit="save-deck">
+  <h3>White Cards: </h3>
+  <div class="ui grid">
+    <div class="ui row">
+      <%= for {white_card, index} <- Enum.with_index(@deck.white_cards)  do %>
+        <div class="fourteen wide column">
+          <label>Text</label>
+          <input type="text" phx-update="ignore" name="<%= "white_card:#{index}" %>" placeholder="Text" value="<%= white_card %>" phx-value-index="<%= index %>"/>
+        </div>
+      <% end %>
+      <div class="one wide column">
+      <br>
+        <button class="ui button" type="button" phx-click="add-white-card">+</button>
+      </div>
+    </div>
+  </div>
+
+  <h3>Black Cards: </h3>
+  <div class="ui grid">
+    <%= for {black_card, index} <- Enum.with_index(@deck.black_cards)  do %>
+      <div class="ui row">
+        <div class="ten wide column">
+          <label>Text</label>
+          <input type="text" phx-update="ignore" name="<%= "black_card:#{index}" %>" placeholder="Text" value="<%= black_card.text %>">
+        </div>
+        <div class="two wide column">
+          <label>Draw</label>
+          <input type="number" phx-update="ignore" name="<%= "black_draw:#{index}" %>" placeholder="Draw" value="<%= black_card.draw %>">
+        </div>
+        <div class="two wide column">
+          <label>Play</label>
+          <input type="number" phx-update="ignore" name="<%= "black_play:#{index}" %>" placeholder="Play" value="<%= black_card.play %>">
+        </div>
+        <div class="one wide column">
+        <br>
+          <%= if(index == Enum.count(@deck.black_cards) - 1 ) do %> <button class="ui button" type="button" phx-click="add-black-card">+</button> <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+<br>
+</form>
+<br><br>
+  <div class="actions">
+    <button class="ui button" type="submit">Submit</button>
+  </div>

@@ -1,0 +1,41 @@
+<div class="ui container">
+
+<h1>Listing Decks</h1>
+<div phx-hook="DeckEditor">
+<%= if @live_action in [:new, :edit] do %>
+
+  <%= live_modal @socket, BirdsAgainstMortalityWeb.DeckLive.FormComponent,
+    id: @deck.id || :new,
+    title: @page_title,
+    action: @live_action,
+    deck: @deck,
+    return_to: Routes.deck_index_path(@socket, :index) %>
+<% end %>
+
+<table>
+  <thead>
+    <tr>
+      <th>White cards</th>
+      <th>Black cards</th>
+
+      <th></th>
+    </tr>
+  </thead>
+  <tbody id="decks">
+    <%= for deck <- @decks do %>
+      <tr id="deck-<%= deck.id %>">
+        <td><%= deck.white_cards %></td>
+        <td><%= deck.black_cards %></td>
+
+        <td>
+          <span><%= live_redirect "Show", to: Routes.deck_show_path(@socket, :show, deck) %></span>
+          <span><%= live_patch "Edit", to: Routes.deck_index_path(@socket, :edit, deck) %></span>
+          <span><%= link "Delete", to: "#", phx_click: "delete", phx_value_id: deck.id, data: [confirm: "Are you sure?"] %></span>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<span><%= live_patch "New Deck", to: Routes.deck_index_path(@socket, :new) %></span>
+</div>

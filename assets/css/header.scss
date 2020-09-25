@@ -1,0 +1,111 @@
+.bam{
+  &__header{
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 8px;
+    width: 100%; 
+    border: 1px solid var(--color-black);
+
+    &-inner{
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      width: 100%;
+    }
+
+    &--left{
+      display: flex;
+      align-items: flex-start;
+      width: 100%;
+    }
+
+    &--right{
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      width: 100%;
+    }
+
+
+    h3,
+    h4{
+      margin: 0;
+    }
+
+    h3{
+      font-size: 24px;
+    }
+    
+    h4{
+      color: var(--color-grey);
+      font-size: 14px;
+    }
+
+    .hamburger{
+      margin-right: 24px;
+      font-size: 22px;
+    }
+  }
+
+  &__logo{
+    margin-right: 40px;
+
+    *{
+      fill: var(--color-black);
+    }
+  }
+
+  &__game{
+
+    &-id{
+      margin-right: 40px;
+
+      h3{
+        letter-spacing: 1px;
+      }
+    }
+
+    &-players{
+      margin-right: 40px;
+    }
+
+    &-spectators{
+      margin-right: 40px;
+    }
+
+    &-timer{
+      display: flex;
+      padding: 8px;
+      border: 1px solid var(--color-black);
+      max-height: 56px;
+      align-items: center;
+      justify-items: flex-start;
+      border-radius: var(--border-radius--md);
+      margin-right: 32px;
+
+      h6{
+        margin: 0 8px 0 0;
+        line-height: 12px;
+        color: var(--color-grey);
+      }
+    }
+  }
+
+  &__pill{
+    border: 1px solid var(--color-black);
+    width: auto;
+    text-align: center;
+    padding: 3px 10px;
+    border-radius: 100px;
+    margin: 0;
+    font-size: 12px;
+    font-weight: 600;
+    display: inline;
+  }
+
+
+  &__dark-toggle{
+    padding-right: 40px;
+  }
+}

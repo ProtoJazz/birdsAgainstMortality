@@ -1,0 +1,27 @@
+<h1>Show Deck</h1>
+
+<%= if @live_action in [:edit] do %>
+  <%= live_modal @socket, BirdsAgainstMortalityWeb.DeckLive.FormComponent,
+    id: @deck.id,
+    title: @page_title,
+    action: @live_action,
+    deck: @deck,
+    return_to: Routes.deck_show_path(@socket, :show, @deck) %>
+<% end %>
+
+<ul>
+
+  <li>
+    <strong>White cards:</strong>
+    <%= @deck.white_cards %>
+  </li>
+
+  <li>
+    <strong>Black cards:</strong>
+    <%= @deck.black_cards %>
+  </li>
+
+</ul>
+
+<span><%= live_patch "Edit", to: Routes.deck_show_path(@socket, :edit, @deck), class: "button" %></span>
+<span><%= live_redirect "Back", to: Routes.deck_index_path(@socket, :index) %></span>

@@ -1,0 +1,118 @@
+:root{
+
+  //==================================
+  // Colors
+  //==================================
+
+  // White
+
+  --color-white: #fff;
+  --color-white--100: #fefefe;
+  --color-white--200: #f4f4f4;
+  --color-white--300: #eaeaea;
+
+  // Grey
+
+  --color-grey: #999;
+  --color-grey--100: #dadada;
+  --color-grey--200: #bababa;
+  --color-grey--300: #8a8a8a;
+  --color-grey--400: #6a6a6a;
+  --color-grey--500: #5a5a5a;
+
+  // Black
+
+  --color-black--100: #464646;
+  --color-black--200: #3a3a3a;
+  --color-black--300: #2e2e2e;
+  --color-black: #000;
+  
+  // Purple
+
+  --color-purple--100: rgba(112, 71, 229, 0.1);
+  --color-purple--250: #A58BEE;
+  --color-purple--400: #7047E5;
+  --color-purple--500: #501FDB;
+  --color-purple--600: #4019AE;
+  --color-purple--750: #270F6B;
+
+  // Green
+
+  --color-green--250: #9DE2A7;
+  --color-green--400: #3FC552;
+  --color-green--500: #309F3F;
+  --color-green--600: #257930;
+  --color-green--750: #133F19;
+
+  // Blue
+
+  --color-blue--250: #86b6f8;
+  --color-blue--400: #3786F4;
+  --color-blue--500: #0d6bed;
+  --color-blue--600: #0a55bd;
+  --color-blue--750: #073679;
+
+  // Red
+
+  --color-red--250: #f8868e;
+  --color-red--400: #f43744;
+  --color-red--500: #ed0d1c;
+  --color-red--600: #bd0a17;
+  --color-red--750: #79070f;
+
+  // Orange
+
+  --color-orange--250: #f2b88c;
+  --color-orange--400: #ea8b42;
+  --color-orange--500: #e17019;
+  --color-orange--600: #b35914;
+  --color-orange--750: #73390d;
+
+  // Yellow
+
+  --color-yellow--250: #f2e18c;
+  --color-yellow--400: #eace42;
+  --color-yellow--500: #e1c019;
+  --color-yellow--600: #b39814;
+  --color-yellow--750: #73620d;
+
+  // Pink
+
+  --color-pink--250: #f28ce8;
+  --color-pink--400: #ea42d9;
+  --color-pink--500: #e119cd;
+  --color-pink--600: #b314a3;
+  --color-pink--750: #730d69;
+
+
+  //==================================
+  // Typography
+  //==================================
+
+  --type-font-family--main: 'Inter', sans-serif;
+  
+
+  //==================================
+  // Misc
+  //==================================
+
+  --box-shadow--100: 0px 1px 10px rgba(46, 46, 46, 0.3);
+
+  --border-radius--sm: 2px;
+  --border-radius--md: 4px;
+  --border-radius--lg: 8px;
+
+  --transition-speed: .4s;
+  --transition-easing: ease-in-out;
+  --transition: all .4s cubic-bezier(0.16, 0.35, 0.38, 0.73);
+
+}
+
+.light{
+
+}
+
+.dark{
+  --color-white: #000;
+  --color-black: #fff;
+}

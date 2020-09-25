@@ -1,0 +1,71 @@
+:root{
+  --card-black: #000;
+  --card-white: #fff;
+}
+
+.bam{
+  &__card{
+    position: relative;
+    min-height: 300px;
+    border-radius: var(--border-radius--md);
+    padding: 24px;
+    font-size: 20px;
+    font-weight: 600;
+    width: 220px;
+    line-height: 150%;
+    margin: 0 16px 16px 0;
+
+    &--black{
+      @extend .bam__card;
+      color: var(--card-white);
+      background: var(--card-black);
+      border: 1px solid var(--color-black);
+    }
+
+    &--white{
+      @extend .bam__card;
+      color: var(--card-black);
+      background: var(--card-white);
+      border: 1px solid var(--color-black);
+    }
+  }
+}
+
+
+.black-card-player-logo {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  width: 40px !important;
+  height: 40px !important;
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+
+  span{
+    text-transform: uppercase;
+  }
+}
+.white-card.disabled{
+  pointer-events: none;
+  opacity: 20%;
+}
+
+.card-is-black-but-i-am-not-judge {
+  pointer-events: none;
+}
+
+.disabled{
+  opacity: .35;
+  pointer-events: none;
+}
+
+.bam__my-hand{
+  .bam__card{
+    cursor: pointer;
+
+    &:hover{
+      border-color: blue;
+    }
+  }
+}

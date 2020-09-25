@@ -1,0 +1,30 @@
+@import './variables';
+@import './utilities';
+@import './layout';
+@import './typography';
+@import './header';
+@import './leaderboard';
+@import "../node_modules/nprogress/nprogress.css";
+@import './card';
+
+
+.player-logo{
+  width: 26px;
+  height: 26px;
+}
+
+.my-post {
+  color: red;
+}
+
+
+.chat-input {
+  position: fixed !important;
+    bottom: 5px;
+}
+
+.chat-box{
+  max-height: 69%;
+  overflow: scroll;
+  overflow-x: hidden;
+}
