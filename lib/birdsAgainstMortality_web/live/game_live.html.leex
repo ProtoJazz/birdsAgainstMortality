@@ -153,10 +153,10 @@
 
     <div class="bam__my-hand">
       <h3>My cards:</h3>
-
+        <button type="button" class="ui button  <%= if  Enum.count(@my_selected_cards) <= 0  do "disabled" end %> " phx-click="play-cards">Confirm selections</button>
       <div class="cards">
         <%= for {card, index} <- Enum.with_index(@my_player.hand) do %>
-          <div class="bam__card--white <%= if Enum.member?(@my_player.cards_in_play, index) or am_judge(@state, @my_player) do "disabled" end %>" phx-value-index="<%= index %>" phx-click="play-card" >
+          <div class="bam__card--white <%= if Enum.member?(@my_player.cards_in_play, index) or am_judge(@state, @my_player) do "disabled" end %> <%= if Enum.member?(@my_selected_cards, index) do "selected" end %>" phx-value-index="<%= index %>" phx-click="select-card" >
             <div class="content">
               <span class="header"><%= card %></span>
             </div>

@@ -1,20 +1,37 @@
 
 
 <div class="ui container">
-  <h3>Welcome : <%= @user.name %></h3>
 
-    <form class="ui form" name="tost" phx-submit="change-name">
+<div class="ui fluid card">
+  <div class="image">
+       <%= live_component(
+                  @socket,
+                  BirdsAgainstMortalityWeb.LogoComponent,
+                  height: 300,
+                  width: 270
+                )
+            %>
+  </div>
+  <div class="content">
+    <a class="header">Welcome : <%= @user.name %></a>
+
+    <div class="description">
+      <form class="ui form" name="tost" phx-submit="change-name">
         <label for="name">UserName:</label><br>
         <input type="text" id="name" name="name" value="<%= @user.name %>"><br>
         <input class="ui button submit"  type="submit" value="Submit">
-    </form>
-    <br>
-    <br>
-    <form class="ui form" name="test" phx-submit="join-game">
-      <label for="name">Game ID (Leave blank to start your own):</label><br>
-      <input type="text" id="game_id" name="game_id"><br>
-      <label for="name">Deck ID (This doesn't work yet, you get what you get):</label><br>
-      <input type="text" id="deck_id" name="deck_id"><br>
-      <input class="ui button submit" type="submit" value="Start">
-    </form>
+      </form>
+      <br>
+      <br>
+      <form class="ui form" name="test" phx-submit="join-game">
+        <label for="name">Game ID (Leave blank to start your own):</label><br>
+        <input type="text" id="game_id" name="game_id"><br>
+        <label for="name">Deck ID (Leave black for default):</label><br>
+        <input type="text" id="deck_id" name="deck_id"><br>
+        <input class="ui button submit" type="submit" value="Start">
+      </form>
+    </div>
+  </div>
+
+</div>
 </div>

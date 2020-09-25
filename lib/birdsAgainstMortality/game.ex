@@ -67,6 +67,12 @@ defmodule BirdsAgainstMortality.Game do
   end
 
   @impl true
+  def handle_cast({:play_cards, player, cards_to_play, player_index}, game) do
+    {:noreply, Game.play_cards(game, player, cards_to_play, player_index), @timeout}
+  end
+
+
+  @impl true
   def handle_cast({:judge, player_id}, game) do
     {:noreply, Game.judge(game, player_id) |> Game.new_judge, @timeout}
   end
@@ -96,6 +102,14 @@ defmodule BirdsAgainstMortality.Game do
   def play_card(game, player, card_index, player_index) do
     currentPlayers = game.state.players
     newPlayers = List.replace_at(currentPlayers, player_index, %{player | cards_in_play: player.cards_in_play ++ [card_index]})
+    newState = %State{game.state | players: newPlayers}
+    %Game{game | state: newState}
+  end
+
+  def play_cards(game, player, cards_to_play, player_index) do
+    currentPlayers = game.state.players
+    IO.puts("DIASDLKAHSDLKASHD")
+    newPlayers = List.replace_at(currentPlayers, player_index, %{player | cards_in_play: cards_to_play})
     newState = %State{game.state | players: newPlayers}
     %Game{game | state: newState}
   end
