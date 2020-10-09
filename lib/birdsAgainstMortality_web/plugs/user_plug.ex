@@ -13,7 +13,6 @@ defmodule BirdsAgainstMortalityWeb.Plugs.User do
         newConn = conn
         |> put_session(:user, %{existingUser | name: newName})
 
-        IO.inspect(get_session(newConn, :user))
         newConn
       end
   end

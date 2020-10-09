@@ -9,7 +9,7 @@ defmodule BirdsAgainstMortality.Game do
   @timeout 600_000
 
   def start_link(options) do
-    GenServer.start_link(__MODULE__, initalize_game(options[:deck_id], options[:points_to_win], options[:hand_size], options[:player_limit]), options)
+    GenServer.start_link(__MODULE__, initalize_game(options[:deck_id], options[:points_to_win], options[:hand_size], options[:max_players]), options)
   end
 
   defp initalize_game(deck_id, points_to_win, hand_size, player_limit) do
@@ -19,7 +19,8 @@ defmodule BirdsAgainstMortality.Game do
   end
 
   defp setup_options(game, points_to_win, hand_size, player_limit) do
-    %Game{ game | points_to_win: points_to_win, hand_size: hand_size, player_limit: player_limit}
+    game = %Game{ game | points_to_win: points_to_win, hand_size: hand_size, player_limit: player_limit}
+    game
   end
 
   defp load_cards(game, deck_id) do
@@ -146,8 +147,6 @@ defmodule BirdsAgainstMortality.Game do
         deck = Deck.shuffle(deck)
         deck.black_cards
       end
-    IO.inspect(black_card)
-    IO.inspect(remaining_cards)
     newState = %State{game.state | judge: %{player: player, index: newIndex}, decks: %{game.state.decks | black_cards: remaining_cards}, current_black_card: black_card, players: newPlayers}
     %Game{game | state: newState}
   end
@@ -182,8 +181,6 @@ defmodule BirdsAgainstMortality.Game do
   @spec join(atom | %{state: atom | %{players: any}}, any) ::
           atom | %{state: atom | %{players: any}}
   def join(game, user) do
-    IO.puts("JOINING")
-    IO.inspect(game)
     existing_player = Enum.find(game.state.players, nil, fn player -> player.id == user.id end)
       if is_nil(existing_player) do
         newPlayers = game.state.players ++ [%{id: user.id, name: user.name, color: user.color, hand: [], points: 0, cards_in_play: []}]

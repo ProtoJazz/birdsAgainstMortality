@@ -5,8 +5,6 @@ defmodule BirdsAgainstMortalityWeb.GameLive do
   @impl true
   def mount(params, session, socket) do
     user = session["user"]
-    IO.inspect(user)
-
     {:ok,
      assign(socket, user: user, my_player: @default_player, open_chat: true, my_selected_cards: [])}
   end
@@ -23,7 +21,6 @@ defmodule BirdsAgainstMortalityWeb.GameLive do
   end
 
   def handle_params(%{"deck_id" => deck_id, "points_to_win" => points_to_win, "max_players" => max_players, "hand_size" => hand_size} = _params, _uri, socket) do
-    IO.inspect(points_to_win)
     deck_id =
       if(deck_id == "") do
         1
@@ -190,7 +187,6 @@ defmodule BirdsAgainstMortalityWeb.GameLive do
   def handle_event("select-card", %{"index" => index}, socket) do
     {parsedIndex, _} = Integer.parse(index)
     selected_cards = socket.assigns.my_selected_cards
-    IO.inspect(selected_cards)
 
     plays =
       if(!is_nil(socket.assigns.state.current_black_card)) do
