@@ -33,7 +33,6 @@ defmodule BirdsAgainstMortalityWeb.DeckLive.Index do
   end
 
   def handle_event("save-deck", params, socket) do
-    IO.inspect(params)
     white_card_fields = Enum.filter(params, fn {name, _value} ->
       if(String.starts_with?(name, "white_card")) do
         true
@@ -41,7 +40,6 @@ defmodule BirdsAgainstMortalityWeb.DeckLive.Index do
       end)
 
     white_cards = Enum.map(white_card_fields, fn {_, value} -> value end)
-    IO.inspect(white_cards)
 
     black_card_fields = Enum.filter(params, fn {name, _value} ->
       if(String.starts_with?(name, "black_card")) do
@@ -64,7 +62,6 @@ defmodule BirdsAgainstMortalityWeb.DeckLive.Index do
     black_cards = Enum.with_index(Enum.map(black_card_fields, fn {_, value} -> value  end))
     |> Enum.map(fn {text, index} -> %{text: text, draw: Enum.at(black_draws, index), play: Enum.at(black_plays, index)} end )
     |> Jason.encode!()
-    IO.inspect(socket.assigns.deck.id)
     if(is_nil(socket.assigns.deck.id)) do
       {Cards.create_deck(%{white_cards: white_cards, black_cards: black_cards})}
     else
