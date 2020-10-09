@@ -91,7 +91,13 @@ defmodule BirdsAgainstMortality.Game do
         player
       end
     end)
-    newState = %State{game.state | players: newPlayers}
+
+    round_winning_player = Enum.find(newPlayers, nil, fn player -> player.id == player_id end)
+    newState = if !is_nil(round_winning_player) and round_winning_player.points >= game.points_to_win do
+      %State{game.state | players: newPlayers, winner: round_winning_player, game_over: true}
+    else
+      %State{game.state | players: newPlayers}
+    end
     %Game{game | state: newState}
   end
 
