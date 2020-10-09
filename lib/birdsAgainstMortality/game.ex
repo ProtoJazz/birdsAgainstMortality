@@ -9,12 +9,17 @@ defmodule BirdsAgainstMortality.Game do
   @timeout 600_000
 
   def start_link(options) do
-    GenServer.start_link(__MODULE__, initalize_game(options[:deck_id]), options)
+    GenServer.start_link(__MODULE__, initalize_game(options[:deck_id], options[:points_to_win], options[:hand_size], options[:player_limit]), options)
   end
 
-  defp initalize_game(deck_id) do
+  defp initalize_game(deck_id, points_to_win, hand_size, player_limit) do
     %Game{}
     |>load_cards(deck_id)
+    |>setup_options(points_to_win, hand_size, player_limit)
+  end
+
+  defp setup_options(game, points_to_win, hand_size, player_limit) do
+    %Game{ game | points_to_win: points_to_win, hand_size: hand_size, player_limit: player_limit}
   end
 
   defp load_cards(game, deck_id) do
@@ -108,7 +113,6 @@ defmodule BirdsAgainstMortality.Game do
 
   def play_cards(game, player, cards_to_play, player_index) do
     currentPlayers = game.state.players
-    IO.puts("DIASDLKAHSDLKASHD")
     newPlayers = List.replace_at(currentPlayers, player_index, %{player | cards_in_play: cards_to_play})
     newState = %State{game.state | players: newPlayers}
     %Game{game | state: newState}
@@ -136,14 +140,12 @@ defmodule BirdsAgainstMortality.Game do
     black_card = List.first(Enum.slice(decks.black_cards, 0..(0)))
 
     remaining_cards = if (Enum.count(decks.black_cards) > 1) do
-      IO.puts("SHRINKAGE")
       Enum.slice(decks.black_cards, 1 .. Enum.count(decks.white_cards))
       else
         deck = Cards.get_deck!(game.deck_id)
         deck = Deck.shuffle(deck)
         deck.black_cards
       end
-    IO.puts("NEW BLACK")
     IO.inspect(black_card)
     IO.inspect(remaining_cards)
     newState = %State{game.state | judge: %{player: player, index: newIndex}, decks: %{game.state.decks | black_cards: remaining_cards}, current_black_card: black_card, players: newPlayers}
@@ -180,6 +182,8 @@ defmodule BirdsAgainstMortality.Game do
   @spec join(atom | %{state: atom | %{players: any}}, any) ::
           atom | %{state: atom | %{players: any}}
   def join(game, user) do
+    IO.puts("JOINING")
+    IO.inspect(game)
     existing_player = Enum.find(game.state.players, nil, fn player -> player.id == user.id end)
       if is_nil(existing_player) do
         newPlayers = game.state.players ++ [%{id: user.id, name: user.name, color: user.color, hand: [], points: 0, cards_in_play: []}]

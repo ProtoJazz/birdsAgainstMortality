@@ -22,7 +22,8 @@ defmodule BirdsAgainstMortalityWeb.GameLive do
     {:noreply, socket}
   end
 
-  def handle_params(%{"deck_id" => deck_id} = _params, _uri, socket) do
+  def handle_params(%{"deck_id" => deck_id, "points_to_win" => points_to_win, "max_players" => max_players, "hand_size" => hand_size} = _params, _uri, socket) do
+    IO.inspect(points_to_win)
     deck_id =
       if(deck_id == "") do
         1
@@ -31,8 +32,32 @@ defmodule BirdsAgainstMortalityWeb.GameLive do
         deck
       end
 
+    points_to_win =
+      if(points_to_win == "") do
+        10
+      else
+        {points, _} = Integer.parse(points_to_win)
+        points
+      end
+
+      max_players =
+      if(max_players == "") do
+        7
+      else
+        {players, _} = Integer.parse(max_players)
+        players
+      end
+      hand_size =
+      if(hand_size == "") do
+        10
+      else
+        {hand, _} = Integer.parse(hand_size)
+        hand
+      end
+
+
     game_id = generate_game_id()
-    start_game_server(game_id, deck_id)
+    start_game_server(game_id, deck_id, points_to_win, max_players, hand_size)
 
     {:noreply,
      push_redirect(
@@ -41,11 +66,11 @@ defmodule BirdsAgainstMortalityWeb.GameLive do
      )}
   end
 
-  def start_game_server(game_id, deck_id \\ 1) do
+  def start_game_server(game_id, deck_id \\ 1, points_to_win \\ 10, max_players \\ 7, hand_size \\ 10) do
     {:ok, _pid} =
       DynamicSupervisor.start_child(
         BirdsAgainstMortality.GameSupervisor,
-        {Game, name: via_tuple(game_id), deck_id: deck_id}
+        {Game, name: via_tuple(game_id), deck_id: deck_id, points_to_win: points_to_win, max_players: max_players, hand_size: hand_size}
       )
   end
 
@@ -81,7 +106,6 @@ defmodule BirdsAgainstMortalityWeb.GameLive do
          %{assigns: %{game_id: game_id, user: user, game: game, state: state}} = socket
        ) do
     # my_player = Enum.find(state.players, nil, fn player -> player.id == user.id end)
-    IO.puts("DEAL")
 
     my_player = Enum.find(game.state.players, nil, fn l_player -> l_player.id == user.id end)
 
@@ -137,7 +161,6 @@ defmodule BirdsAgainstMortalityWeb.GameLive do
   end
 
   def handle_event("start-game", _params, socket) do
-    IO.puts("BING")
     :ok = GenServer.cast(via_tuple(socket.assigns.game_id), {:start})
     :ok = Phoenix.PubSub.broadcast(BirdsAgainstMortality.PubSub, socket.assigns.game_id, :update)
     {:noreply, socket}
@@ -165,7 +188,6 @@ defmodule BirdsAgainstMortalityWeb.GameLive do
   end
 
   def handle_event("select-card", %{"index" => index}, socket) do
-    IO.puts("Selecting card")
     {parsedIndex, _} = Integer.parse(index)
     selected_cards = socket.assigns.my_selected_cards
     IO.inspect(selected_cards)
@@ -184,10 +206,8 @@ defmodule BirdsAgainstMortalityWeb.GameLive do
       if !is_nil(socket.assigns.my_player.id == socket.assigns.user.id) and !am_judge(socket) and
            !is_nil(socket.assigns.state.current_black_card) do
         selecting = !Enum.member?(selected_cards, parsedIndex)
-        IO.puts("Tryna")
         if selecting do
           if(plays > 0) do
-            IO.puts("SELECTED")
             select_card(socket, parsedIndex)
           else
             socket
@@ -206,17 +226,14 @@ defmodule BirdsAgainstMortalityWeb.GameLive do
     game = socket.assigns.game
     user = socket.assigns.user
     cards_to_play = socket.assigns.my_selected_cards
-    IO.puts("DAMN")
     if (socket.assigns.my_player.id == socket.assigns.user.id) and !am_judge(socket) and
         (!is_nil(socket.assigns.state.current_black_card)) do
     {my_player, my_player_index} = Enum.find(Enum.with_index(game.state.players), nil, fn {l_player, _index} ->  l_player.id == user.id end)
-          IO.puts("PLAY IT BOY")
     :ok =
       GenServer.cast(
         via_tuple(socket.assigns.game_id),
         {:play_cards, my_player, cards_to_play, my_player_index}
       )
-      IO.puts("DILLS")
 
     :ok =
       Phoenix.PubSub.broadcast(BirdsAgainstMortality.PubSub, socket.assigns.game_id, :update)
