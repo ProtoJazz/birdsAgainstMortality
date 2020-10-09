@@ -133,6 +133,7 @@
       <div class="bam__current-cards">
 
         <div class="bam__cards-in-play">
+        <%= if !@state.game_over do %>
           <%= for player <- @state.players do %>
             <%= for {card, index} <- Enum.with_index(player.hand) do %>
               <%= if Enum.member?(player.cards_in_play, index) do %>
@@ -147,6 +148,9 @@
               <% end %>
             <% end %>
           <% end %>
+        <% else %>
+        <h3>Game Over! <%= @state.winner.name %> wins all the breadsticks</h3>
+        <% end %>
         </div>
       </div>
     </div>
