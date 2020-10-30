@@ -234,7 +234,7 @@ defmodule BirdsAgainstMortalityWeb.GameLive do
     :ok =
       Phoenix.PubSub.broadcast(BirdsAgainstMortality.PubSub, socket.assigns.game_id, :update)
 
-      {:noreply, socket}
+      {:noreply, assign(socket, my_selected_cards: [])}
 end
 
   end

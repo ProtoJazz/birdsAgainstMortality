@@ -125,6 +125,14 @@
                 <div class="ui right <%= @state.judge.player.color %> circular label player-logo black-card-player-logo">
                   <span><%= String.slice(@state.judge.player.name, 0..1)%></span>
                 </div>
+                <%= if @state.current_black_card.draw != "0" do %>
+                 <div class="ui left green circular label player-logo black-card-draw-logo">
+                  <span>Draw <%= @state.current_black_card.draw %></span>
+                </div>
+                <% end %>
+                <div class="ui left red circular label player-logo black-card-play-logo">
+                  <span>Play <%= @state.current_black_card.play %></span>
+                </div>
               </div>
             </div>
         <%= end %>

@@ -49,6 +49,36 @@
     text-transform: uppercase;
   }
 }
+
+.black-card-draw-logo {
+  position: absolute;
+  bottom: 10px;
+  left: 55px;
+  width: 40px !important;
+  height: 40px !important;
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+
+  span{
+    text-transform: uppercase;
+  }
+}
+
+.black-card-play-logo {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  width: 40px !important;
+  height: 40px !important;
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+
+  span{
+    text-transform: uppercase;
+  }
+}
 .white-card.disabled{
   pointer-events: none;
   opacity: 20%;

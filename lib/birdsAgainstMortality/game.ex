@@ -146,15 +146,27 @@ defmodule BirdsAgainstMortality.Game do
     decks = game.state.decks
     black_card = List.first(Enum.slice(decks.black_cards, 0..(0)))
 
-    remaining_cards = if (Enum.count(decks.black_cards) > 1) do
+    remaining_black_cards = if (Enum.count(decks.black_cards) > 1) do
       Enum.slice(decks.black_cards, 1 .. Enum.count(decks.white_cards))
       else
         deck = Cards.get_deck!(game.deck_id)
         deck = Deck.shuffle(deck)
         deck.black_cards
       end
-    newState = %State{game.state | judge: %{player: player, index: newIndex}, decks: %{game.state.decks | black_cards: remaining_cards}, current_black_card: black_card, players: newPlayers}
-    %Game{game | state: newState}
+    newState = %State{game.state | judge: %{player: player, index: newIndex}, decks: %{game.state.decks | black_cards: remaining_black_cards}, current_black_card: black_card, players: newPlayers}
+    newGame = %Game{game | state: newState}
+    {parsed_draws, _} = Integer.parse(black_card.draw)
+    if(parsed_draws > 0) do
+      Enum.reduce(Enum.with_index(game.state.players), newGame, fn {loop_player, index}, redGame ->
+        if(player.id != loop_player.id) do
+          deal(redGame, %{player: loop_player, deal_count: parsed_draws, player_index: index})
+        else
+          redGame
+        end
+      end)
+    else
+      newGame
+    end
   end
   @impl true
   def handle_cast({:deal, params}, game) do
