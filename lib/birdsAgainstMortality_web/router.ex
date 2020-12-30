@@ -14,6 +14,10 @@ defmodule BirdsAgainstMortalityWeb.Router do
   pipeline :api do
     plug :accepts, ["json"]
   end
+  scope "/api", BirdsAgainstMortalityWeb do
+    pipe_through :api
+    post "/cards", CardController, :new
+  end
 
   scope "/", BirdsAgainstMortalityWeb do
     pipe_through :browser

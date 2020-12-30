@@ -23,6 +23,8 @@ config :logger, :console,
   format: "$time $metadata[$level] $message\n",
   metadata: [:request_id]
 
+config :birdsAgainstMortality, :basic_auth, username: System.get_env("ITEM_IMPORT_USERNAME"), password: System.get_env("ITEM_IMPORT_PASSWORD")
+
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 

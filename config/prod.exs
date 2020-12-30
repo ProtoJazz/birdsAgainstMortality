@@ -14,7 +14,9 @@ config :birdsAgainstMortality, BirdsAgainstMortalityWeb.Endpoint,
   url: [scheme: "https", host: "#{System.get_env("APP_DOMAIN")}", port: 443],
   check_origin: [
     "https://#{System.get_env("APP_DOMAIN")}",
-    "https://www.#{System.get_env("APP_DOMAIN")}"
+    "https://www.#{System.get_env("APP_DOMAIN")}",
+    "https://#{System.get_env("ALT_APP_DOMAIN")}",
+    "https://www.#{System.get_env("ALT_APP_DOMAIN")}"
   ],
   force_ssl: [rewrite_on: [:x_forwarded_proto]],
   cache_static_manifest: "priv/static/cache_manifest.json",

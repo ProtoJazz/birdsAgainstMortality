@@ -5,14 +5,16 @@ defmodule BirdsAgainstMortality.Cards.Deck do
   schema "decks" do
     field :black_cards, :string
     field :white_cards, {:array, :string}
-
+    field :official, :boolean
+    field :name, :string
+    field :sitewide, :boolean
     timestamps()
   end
 
   @doc false
   def changeset(deck, attrs) do
     deck
-    |> cast(attrs, [:white_cards, :black_cards])
+    |> cast(attrs, [:white_cards, :black_cards, :official, :name, :sitewide])
     |> validate_required([:white_cards, :black_cards])
   end
 
