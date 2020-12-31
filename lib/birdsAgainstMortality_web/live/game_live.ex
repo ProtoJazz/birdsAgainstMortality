@@ -195,8 +195,7 @@ defmodule BirdsAgainstMortalityWeb.GameLive do
 
     plays =
       if(!is_nil(socket.assigns.state.current_black_card)) do
-        {parsed_plays, _} = Integer.parse(socket.assigns.state.current_black_card.play)
-        parsed_plays
+        socket.assigns.state.current_black_card.play
       else
         0
       end
@@ -251,8 +250,7 @@ end
 
     plays =
       if(!is_nil(socket.assigns.state.current_black_card)) do
-        {parsed_plays, _} = Integer.parse(socket.assigns.state.current_black_card.play)
-        parsed_plays
+       socket.assigns.state.current_black_card.play
       else
         0
       end
