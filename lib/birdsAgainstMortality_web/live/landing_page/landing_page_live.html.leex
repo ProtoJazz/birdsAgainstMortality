@@ -1,4 +1,4 @@
-<div class="ui container">
+<div class="ui container" phx-hook="LandingPage">
 
 <div class="ui fluid card">
   <div class="image">
@@ -37,7 +37,29 @@
        <div class="ui bottom attached <%= if (@tab == "start"), do: "active" %> tab segment">
          <form class="ui form" name="test" phx-submit="start-game">
           <label for="deck_id">Deck ID:</label><br>
-          <input type="text" id="deck_id" name="deck_id"><br>
+          <input type="text" id="deck_id" name="deck_id" value="<%= Enum.join(@deck_selections, ",") %>"><br>
+          <% official_decks = Enum.filter(@deck_options, fn deck -> deck.official end) %>
+          <% unofficial_decks = Enum.filter(@deck_options, fn deck -> !deck.official end) %>
+          <hr>
+          <h3>Official Decks: </h3>
+
+          <%= for deck <- official_decks do %>
+          <div class="ui checkbox">
+              <input type="checkbox" name="<%= deck.name %>" <%= if Enum.member?(@deck_selections, deck.id) do "checked" end %> phx-value-deck-id="<%= deck.id %>"" phx-click="deck-selection">
+              <label><%= deck.name %></label>
+            </div>
+          <% end %>
+          <hr>
+          <h3>Unofficial Decks: </h3>
+
+          <%= for deck <- unofficial_decks do %>
+          <div class="ui checkbox">
+              <input type="checkbox" name="<%= deck.name %>" <%= if Enum.member?(@deck_selections, deck.id) do "checked" end %> phx-value-deck-id="<%= deck.id %>"" phx-click="deck-selection">
+              <label><%= deck.name %></label>
+            </div>
+          <% end %>
+          <hr>
+          <br>
           <label for="points_to_win">Points to win:</label><br>
           <input type="number" id="points_to_win" name="points_to_win" value=<%= @points_to_win %>><br>
           <label for="max_players">Max players:</label><br>

@@ -2,19 +2,19 @@ defmodule BirdsAgainstMortality.Game do
   alias BirdsAgainstMortality.{Game, State, Cards}
   alias BirdsAgainstMortality.Cards.Deck
 
-  defstruct state: %State{}, deck_id: nil, points_to_win: 10, hand_size: 10, player_limit: 7
+  defstruct state: %State{}, deck_ids: nil, points_to_win: 10, hand_size: 10, player_limit: 7
 
   use GenServer, restart: :transient
 
   @timeout 600_000
 
   def start_link(options) do
-    GenServer.start_link(__MODULE__, initalize_game(options[:deck_id], options[:points_to_win], options[:hand_size], options[:max_players]), options)
+    GenServer.start_link(__MODULE__, initalize_game(options[:deck_ids], options[:points_to_win], options[:hand_size], options[:max_players]), options)
   end
 
-  defp initalize_game(deck_id, points_to_win, hand_size, player_limit) do
+  defp initalize_game(deck_ids, points_to_win, hand_size, player_limit) do
     %Game{}
-    |>load_cards(deck_id)
+    |>load_cards(deck_ids)
     |>setup_options(points_to_win, hand_size, player_limit)
   end
 
@@ -23,15 +23,25 @@ defmodule BirdsAgainstMortality.Game do
     game
   end
 
-  defp load_cards(game, deck_id) do
+  defp load_cards(game, deck_ids) do
     #this will need to be an external ID soon
-    deck = Cards.get_deck(deck_id)
-    deck = if is_nil(deck) do
-      Cards.get_deck!(1)
+    %Game{ game |state: %State{game.state | decks: refresh_deck(deck_ids)}, deck_ids: deck_ids}
+  end
+
+  def refresh_deck(deck_ids) do
+    decks = Cards.get_decks(deck_ids)
+    decks = if Enum.count(decks) < 1 do
+      [Cards.get_deck!(1)]
     else
-      deck
+      decks
     end
-    %Game{ game |state: %State{game.state | decks: Deck.shuffle(deck)}, deck_id: deck_id}
+    white_cards = Enum.reduce(decks, [], fn deck, acc ->
+    acc ++ deck.white_cards
+    end)
+    black_cards = Enum.reduce(decks, [], fn deck, acc ->
+      acc ++ deck.black_cards
+      end)
+    full_deck = Deck.shuffle(%Deck{black_cards: black_cards, white_cards: white_cards})
   end
 
   @impl true
@@ -149,17 +159,15 @@ defmodule BirdsAgainstMortality.Game do
     remaining_black_cards = if (Enum.count(decks.black_cards) > 1) do
       Enum.slice(decks.black_cards, 1 .. Enum.count(decks.white_cards))
       else
-        deck = Cards.get_deck!(game.deck_id)
-        deck = Deck.shuffle(deck)
+        deck = refresh_deck(game.deck_ids)
         deck.black_cards
       end
     newState = %State{game.state | judge: %{player: player, index: newIndex}, decks: %{game.state.decks | black_cards: remaining_black_cards}, current_black_card: black_card, players: newPlayers}
     newGame = %Game{game | state: newState}
-    {parsed_draws, _} = Integer.parse(black_card.draw)
-    if(parsed_draws > 0) do
+    if(black_card.draw > 0) do
       Enum.reduce(Enum.with_index(game.state.players), newGame, fn {loop_player, index}, redGame ->
         if(player.id != loop_player.id) do
-          deal(redGame, %{player: loop_player, deal_count: parsed_draws, player_index: index})
+          deal(redGame, %{player: loop_player, deal_count: black_card.draw , player_index: index})
         else
           redGame
         end
@@ -184,8 +192,7 @@ defmodule BirdsAgainstMortality.Game do
   def deal(game, %{player: player, deal_count: deal_count, player_index: index}) do
     decks = game.state.decks
     decks = if(Enum.count(decks.white_cards) < deal_count) do
-      deck = Cards.get_deck!(game.deck_id)
-      Deck.shuffle(deck)
+      deck = refresh_deck(game.deck_ids)
     else
       decks
     end

@@ -21,6 +21,12 @@ defmodule BirdsAgainstMortality.Cards do
     Repo.all(Deck)
   end
 
+  def get_sitewide_decks do
+    Deck
+    |> where(sitewide: true)
+    |> Repo.all()
+  end
+
   @doc """
   Gets a single deck.
 
@@ -49,6 +55,21 @@ defmodule BirdsAgainstMortality.Cards do
     %Deck{dbDeck | black_cards: Jason.decode!(dbDeck.black_cards, %{keys: :atoms})}
 
     end
+  end
+
+  def get_decks(ids) do
+    dbDecks =
+      Deck
+      |> where([d], d.id in ^ids)
+      |> Repo.all()
+
+    Enum.map(dbDecks, fn deck ->
+      if(is_nil(deck)) do
+        nil
+      else
+      %Deck{deck | black_cards: Jason.decode!(deck.black_cards, %{keys: :atoms})}
+      end
+    end)
   end
   @doc """
   Creates a deck.

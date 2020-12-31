@@ -21,12 +21,16 @@ defmodule BirdsAgainstMortalityWeb.GameLive do
   end
 
   def handle_params(%{"deck_id" => deck_id, "points_to_win" => points_to_win, "max_players" => max_players, "hand_size" => hand_size} = _params, _uri, socket) do
-    deck_id =
+    deck_ids =
       if(deck_id == "") do
         1
       else
-        {deck, _} = Integer.parse(deck_id)
-        deck
+        String.split(deck_id, ",")
+        |> Enum.map(fn string_id ->
+          {id, _} = Integer.parse(string_id)
+          id
+        end)
+
       end
 
     points_to_win =
@@ -54,7 +58,7 @@ defmodule BirdsAgainstMortalityWeb.GameLive do
 
 
     game_id = generate_game_id()
-    start_game_server(game_id, deck_id, points_to_win, max_players, hand_size)
+    start_game_server(game_id, deck_ids, points_to_win, max_players, hand_size)
 
     {:noreply,
      push_redirect(
@@ -63,11 +67,12 @@ defmodule BirdsAgainstMortalityWeb.GameLive do
      )}
   end
 
-  def start_game_server(game_id, deck_id \\ 1, points_to_win \\ 10, max_players \\ 7, hand_size \\ 10) do
+  def start_game_server(game_id, deck_ids \\ [1], points_to_win \\ 10, max_players \\ 7, hand_size \\ 10) do
+    IO.puts("DING DIGN")
     {:ok, _pid} =
       DynamicSupervisor.start_child(
         BirdsAgainstMortality.GameSupervisor,
-        {Game, name: via_tuple(game_id), deck_id: deck_id, points_to_win: points_to_win, max_players: max_players, hand_size: hand_size}
+        {Game, name: via_tuple(game_id), deck_ids: deck_ids, points_to_win: points_to_win, max_players: max_players, hand_size: hand_size}
       )
   end
 

@@ -28,6 +28,12 @@ Hooks.DeckEditor = {
   }
 }
 
+Hooks.LandingPage = {
+  mounted() {
+    
+  }
+}
+
 let liveSocket = new LiveSocket("/live", Socket, {hooks: Hooks, params: {_csrf_token: csrfToken}})
 
 // Show progress bar on live navigation and form submits
