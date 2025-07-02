@@ -14,7 +14,8 @@ defmodule BirdsAgainstMortality.MixProject do
       releases: [
         birds_against_mortality: [
           include_executables_for: [:unix],
-          applications: [runtime_tools: :permanent]
+          applications: [runtime_tools: :permanent],
+          config_providers: [{Config.Reader, "/app/releases.exs"}]
         ]
       ]
     ]

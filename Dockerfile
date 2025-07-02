@@ -1,13 +1,21 @@
 # Build stage - using a Debian-based image for better compatibility
 FROM elixir:1.11 AS build
 
+# Set locale to avoid UTF-8 issues
+ENV LANG=C.UTF-8
+ENV LC_ALL=C.UTF-8
+
 # Install build dependencies
 RUN apt-get update -y && apt-get install -y \
     build-essential \
     nodejs \
     npm \
     git \
+    locales \
     && apt-get clean && rm -f /var/lib/apt/lists/*_*
+
+# Generate UTF-8 locale
+RUN sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && locale-gen
 
 # Prepare build dir
 WORKDIR /app
@@ -41,21 +49,26 @@ RUN mix phx.digest
 # Compile and build release
 COPY lib lib
 
-# Create a release configuration file if it doesn't exist
-RUN mkdir -p rel
-RUN echo 'import Config' > rel/config.exs
-
-# Compile and build release with a valid name
+# Remove the rel/config.exs creation since you have releases config in mix.exs
+# Just compile and build release directly
 RUN mix do compile, release birds_against_mortality
 
 # App stage - using Debian slim for compatibility
 FROM debian:bullseye-slim AS app
 
+# Set locale for runtime as well
+ENV LANG=C.UTF-8
+ENV LC_ALL=C.UTF-8
+
 # Install runtime dependencies
 RUN apt-get update -y && apt-get install -y \
     openssl \
     ca-certificates \
+    locales \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Generate UTF-8 locale
+RUN sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && locale-gen
 
 WORKDIR /app
 RUN useradd --system --create-home --shell /bin/bash app
