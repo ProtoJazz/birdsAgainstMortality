@@ -14,6 +14,9 @@ RUN mix local.hex --force && \
 # Set build ENV
 ENV MIX_ENV=prod
 
+ENV POOL_SIZE=10
+ENV PORT=4000
+
 # Install mix dependencies
 COPY mix.exs mix.lock ./
 COPY config config
