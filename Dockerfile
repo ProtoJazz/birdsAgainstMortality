@@ -48,22 +48,10 @@ RUN mix phx.digest
 
 # Compile and build release
 COPY lib lib
-
-# Debug: Check what's in the config directory
-RUN echo "=== Config files before release ===" && ls -la config/
+COPY migrate.sh ./
 
 # Compile and build release
 RUN mix do compile, release birds_against_mortality
-
-# Debug: Check what's in the release directory
-RUN echo "=== Release structure ===" && find _build/prod/rel/birds_against_mortality -name "*.exs" -o -name "*.ex" | head -20
-
-# Check if there's a runtime.exs file being generated
-RUN if [ -f "_build/prod/rel/birds_against_mortality/releases/0.1.0/runtime.exs" ]; then \
-    echo "=== Found runtime.exs, contents: ===" && \
-    cat _build/prod/rel/birds_against_mortality/releases/0.1.0/runtime.exs; \
-    else echo "=== No runtime.exs found ==="; \
-    fi
 
 # App stage - using Debian slim for compatibility
 FROM debian:bullseye-slim AS app
@@ -81,15 +69,19 @@ RUN apt-get update -y && apt-get install -y \
 
 # Generate UTF-8 locale
 RUN sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && locale-gen
-COPY migrate.sh ./
-RUN chmod +x /app/migrate.sh
-COPY --from=build --chown=app:app /app/migrate.sh ./
+
 WORKDIR /app
 RUN useradd --system --create-home --shell /bin/bash app
 RUN chown app:app /app
 USER app:app
 
 COPY --from=build --chown=app:app /app/_build/prod/rel/birds_against_mortality ./
+COPY --from=build --chown=app:app /app/migrate.sh ./
+
+# Make migration script executable
+USER root
+RUN chmod +x /app/migrate.sh
+USER app:app
 
 ENV HOME=/app
 EXPOSE 4000
