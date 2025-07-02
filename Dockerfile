@@ -20,7 +20,6 @@ RUN mix local.hex --force && \
 ENV MIX_ENV=prod
 
 # Set dummy build-time env vars
-# These are only used during compilation and will be overridden at runtime
 ENV DATABASE_URL=postgres://postgres:postgres@localhost/birdsAgainstMortality_prod
 ENV SECRET_KEY_BASE=dummy_secret_key_base_for_build_only
 ENV POOL_SIZE=10
@@ -34,7 +33,6 @@ RUN mix do deps.get, deps.compile
 # Build assets
 COPY assets/package.json assets/package-lock.json ./assets/
 RUN cd assets && npm install
-
 COPY priv priv
 COPY assets assets
 RUN cd assets && npm run deploy
@@ -50,21 +48,22 @@ RUN echo 'import Config' > rel/config.exs
 # Compile and build release with a valid name
 RUN mix do compile, release birds_against_mortality
 
-# App stage - using Alpine for smaller runtime image
-FROM alpine:3.16 AS app
+# App stage - using Debian slim for compatibility
+FROM debian:bullseye-slim AS app
 
-RUN apk add --no-cache openssl ncurses-libs libstdc++ libgcc
+# Install runtime dependencies
+RUN apt-get update -y && apt-get install -y \
+    openssl \
+    ca-certificates \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
+RUN useradd --system --create-home --shell /bin/bash app
+RUN chown app:app /app
+USER app:app
 
-RUN chown nobody:nobody /app
-
-USER nobody:nobody
-
-COPY --from=build --chown=nobody:nobody /app/_build/prod/rel/birds_against_mortality ./
+COPY --from=build --chown=app:app /app/_build/prod/rel/birds_against_mortality ./
 
 ENV HOME=/app
-
 EXPOSE 4000
-
 CMD ["bin/birds_against_mortality", "start"]
