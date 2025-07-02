@@ -25,9 +25,11 @@ COPY . .
 RUN mix deps.compile && \
     mix compile
 
+RUN cd assets && npm install && npm run deploy
 RUN mix phx.digest
-RUN mix release
+
+RUN mix do compile, release
 
 EXPOSE 4000
 
-CMD ["sh", "-c", "bin/birdsAgainstMortality start"]
+CMD ["sh", "-c", "_build/prod/rel/birds_against_mortality/bin/birds_against_mortality start"]
