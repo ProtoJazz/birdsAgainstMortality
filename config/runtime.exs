@@ -32,7 +32,23 @@ config :birdsAgainstMortality, BirdsAgainstMortalityWeb.Endpoint,
 # If you are doing OTP releases, you need to instruct Phoenix
 # to start each relevant endpoint:
 #
-config :birdsAgainstMortality, BirdsAgainstMortalityWeb.Endpoint, server: true
+
+host = System.get_env("PHX_HOST") || "example.com"
+port = String.to_integer(System.get_env("PORT") || "4000")
+
+config :birdsAgainstMortality, BirdsAgainstMortalityWeb.Endpoint,
+  server: true,
+  url: [host: host, port: 443, scheme: "https"],
+  http: [
+    # Enable IPv6 and bind on all interfaces.
+    # Set it to  {0, 0, 0, 0, 0, 0, 0, 1} for local network only access.
+    # See the documentation on https://hexdocs.pm/bandit/Bandit.html#t:options/0
+    # for details about using IPv6 vs IPv4 and loopback vs public addresses.
+    ip: {0, 0, 0, 0, 0, 0, 0, 0},
+    port: port
+  ],
+  secret_key_base: secret_key_base
+
 #
 # Then you can assemble a release by calling `mix release`.
 # See `mix help release` for more information.
