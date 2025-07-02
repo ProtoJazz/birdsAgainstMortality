@@ -26,7 +26,7 @@ RUN mix deps.compile && \
     mix compile
 
 RUN mix phx.digest
-RUN mix release --env=prod
+RUN mix release
 
 EXPOSE 4000
 
