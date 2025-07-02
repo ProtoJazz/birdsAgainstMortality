@@ -15,11 +15,16 @@ defmodule BirdsAgainstMortality.Release do
   def seed do
     load_app()
 
-    # Run the seed file
-    seed_script = Path.join([:code.priv_dir(@app), "repo", "seeds.exs"])
+    # Start the repo and run seeds
+    for repo <- repos() do
+      {:ok, _, _} = Ecto.Migrator.with_repo(repo, fn _repo ->
+        # Run the seed file within the repo context
+        seed_script = Path.join([:code.priv_dir(@app), "repo", "seeds.exs"])
 
-    if File.exists?(seed_script) do
-      Code.eval_file(seed_script)
+        if File.exists?(seed_script) do
+          Code.eval_file(seed_script)
+        end
+      end)
     end
   end
 
