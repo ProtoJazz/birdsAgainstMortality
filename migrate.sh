@@ -2,5 +2,5 @@
 set -e
 
 echo "Running database migrations..."
-bin/birdsAgainstMortality eval "BirdsAgainstMortality.Release.migrate()"
+bin/birds_against_mortality eval "BirdsAgainstMortality.Release.migrate()"
 echo "Migrations completed successfully!"

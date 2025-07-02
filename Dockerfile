@@ -1,8 +1,13 @@
-# Build stage
-FROM elixir:1.12-alpine AS build
+# Build stage - using a Debian-based image for better compatibility
+FROM elixir:1.11 AS build
 
 # Install build dependencies
-RUN apk add --no-cache build-base git python3 nodejs npm
+RUN apt-get update -y && apt-get install -y \
+    build-essential \
+    nodejs \
+    npm \
+    git \
+    && apt-get clean && rm -f /var/lib/apt/lists/*_*
 
 # Prepare build dir
 WORKDIR /app
@@ -14,6 +19,10 @@ RUN mix local.hex --force && \
 # Set build ENV
 ENV MIX_ENV=prod
 
+# Set dummy build-time env vars
+# These are only used during compilation and will be overridden at runtime
+ENV DATABASE_URL=postgres://postgres:postgres@localhost/birdsAgainstMortality_prod
+ENV SECRET_KEY_BASE=dummy_secret_key_base_for_build_only
 ENV POOL_SIZE=10
 ENV PORT=4000
 
@@ -24,21 +33,27 @@ RUN mix do deps.get, deps.compile
 
 # Build assets
 COPY assets/package.json assets/package-lock.json ./assets/
-RUN npm --prefix ./assets ci --progress=false --no-audit --loglevel=error
+RUN cd assets && npm install
 
 COPY priv priv
 COPY assets assets
-RUN npm run --prefix ./assets deploy
+RUN cd assets && npm run deploy
 RUN mix phx.digest
 
 # Compile and build release
 COPY lib lib
-RUN mix do compile, release
 
-# App stage
+# Create a release configuration file if it doesn't exist
+RUN mkdir -p rel
+RUN echo 'import Config' > rel/config.exs
+
+# Compile and build release with a valid name
+RUN mix do compile, release birds_against_mortality
+
+# App stage - using Alpine for smaller runtime image
 FROM alpine:3.16 AS app
 
-RUN apk add --no-cache openssl ncurses-libs
+RUN apk add --no-cache openssl ncurses-libs libstdc++ libgcc
 
 WORKDIR /app
 
@@ -46,10 +61,10 @@ RUN chown nobody:nobody /app
 
 USER nobody:nobody
 
-COPY --from=build --chown=nobody:nobody /app/_build/prod/rel/birdsAgainstMortality ./
+COPY --from=build --chown=nobody:nobody /app/_build/prod/rel/birds_against_mortality ./
 
 ENV HOME=/app
 
 EXPOSE 4000
 
-CMD ["bin/birdsAgainstMortality", "start"]
+CMD ["bin/birds_against_mortality", "start"]

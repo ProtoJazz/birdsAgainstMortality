@@ -10,7 +10,13 @@ defmodule BirdsAgainstMortality.MixProject do
       compilers: [:phoenix, :gettext] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
-      deps: deps()
+      deps: deps(),
+      releases: [
+        birds_against_mortality: [
+          include_executables_for: [:unix],
+          applications: [runtime_tools: :permanent]
+        ]
+      ]
     ]
   end
 
@@ -47,7 +53,7 @@ defmodule BirdsAgainstMortality.MixProject do
       {:gettext, "~> 0.11"},
       {:jason, "~> 1.0"},
       {:plug_cowboy, "~> 2.3"},
-      {:uuid, "~> 1.1" },
+      {:uuid, "~> 1.1"},
       {:timex, "~> 3.0"}
     ]
   end
