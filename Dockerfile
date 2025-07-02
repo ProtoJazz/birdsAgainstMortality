@@ -1,4 +1,4 @@
-FROM erlang:22.3.1
+FROM elixir:1.10.1-slim
 
 RUN apt-get update && apt-get install -y \
     curl \
@@ -11,12 +11,6 @@ RUN apt-get update && apt-get install -y \
 
 RUN mkdir /opt/app
 WORKDIR /opt/app
-
-RUN curl -sL https://github.com/elixir-lang/elixir/releases/download/v1.10.1/Precompiled.zip -o elixir.zip \
-    && unzip elixir.zip -d /usr/lib/elixir \
-    && echo 'export PATH="$PATH:/usr/lib/elixir/bin"' >> /root/.bashrc \
-    && source /root/.bashrc \
-    && rm elixir.zip
 
 ENV MIX_ENV=prod
 ENV LANG=C.UTF-8
