@@ -35,7 +35,7 @@ config :birdsAgainstMortality, BirdsAgainstMortalityWeb.Endpoint,
 # If you are doing OTP releases, you need to instruct Phoenix
 # to start each relevant endpoint:
 #
-#     config :birdsAgainstMortality, BirdsAgainstMortalityWeb.Endpoint, server: true
+    config :birdsAgainstMortality, BirdsAgainstMortalityWeb.Endpoint, server: true
 #
 # Then you can assemble a release by calling `mix release`.
 # See `mix help release` for more information.

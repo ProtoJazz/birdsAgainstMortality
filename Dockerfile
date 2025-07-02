@@ -28,7 +28,7 @@ RUN mix deps.compile && \
 RUN cd assets && npm install && npm run deploy
 RUN mix phx.digest
 
-RUN mix do compile, release
+RUN mix release birds_against_mortality
 
 EXPOSE 4000
 
