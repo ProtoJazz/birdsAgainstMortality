@@ -18,7 +18,7 @@ defmodule BirdsAgainstMortalityWeb.Endpoint do
   socket "/live", Phoenix.LiveView.Socket,
     websocket: [
       connect_info: [session: @session_options],
-      check_origin: false,  # Temporarily disable for testing
+      check_origin: true,  # Temporarily disable for testing
       timeout: 45_000,
       transport_log: :debug  # Add logging to see what's happening
     ]
