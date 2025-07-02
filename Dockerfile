@@ -1,45 +1,52 @@
-# Use a base image that closely matches Elixir 1.10.1 and Erlang 22.3.1
-FROM elixir:1.10.1-slim
+# Build stage
+FROM elixir:1.12-alpine AS build
 
-# Install any necessary dependencies
-RUN apt-get update && apt-get install -y \
-    curl \
-    git \
-    build-essential \
-    && curl -sL https://deb.nodesource.com/setup_12.x | bash - \
-    && apt-get install -y nodejs \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+# Install build dependencies
+RUN apk add --no-cache build-base git python3 nodejs npm
 
-# Create and set the application directory
-RUN mkdir /opt/app
-WORKDIR /opt/app
+# Prepare build dir
+WORKDIR /app
 
-ENV MIX_ENV=prod
-ENV LANG=C.UTF-8
-
-# Copy mix.exs and mix.lock files for dependency installation first
-COPY mix.exs mix.lock ./
+# Install hex + rebar
 RUN mix local.hex --force && \
-    mix local.rebar --force && \
-    mix deps.get
+    mix local.rebar --force
 
-# Copy the entire application source code
-COPY . .
+# Set build ENV
+ENV MIX_ENV=prod
 
-# Install dependencies and compile
-RUN mix deps.compile && \
-    mix compile
+# Install mix dependencies
+COPY mix.exs mix.lock ./
+COPY config config
+RUN mix do deps.get, deps.compile
 
-# Set up the application assets
-RUN cd assets && npm install && npm run deploy
+# Build assets
+COPY assets/package.json assets/package-lock.json ./assets/
+RUN npm --prefix ./assets ci --progress=false --no-audit --loglevel=error
+
+COPY priv priv
+COPY assets assets
+RUN npm run --prefix ./assets deploy
 RUN mix phx.digest
 
-# Set up the database, if needed. You may need to customize this based on your setup.
-RUN mix ecto.create && mix ecto.migrate
+# Compile and build release
+COPY lib lib
+RUN mix do compile, release
 
-# Expose the port your app will run on
+# App stage
+FROM alpine:3.16 AS app
+
+RUN apk add --no-cache openssl ncurses-libs
+
+WORKDIR /app
+
+RUN chown nobody:nobody /app
+
+USER nobody:nobody
+
+COPY --from=build --chown=nobody:nobody /app/_build/prod/rel/birdsAgainstMortality ./
+
+ENV HOME=/app
+
 EXPOSE 4000
 
-# Command to run the application
-CMD ["mix", "phx.server"]
+CMD ["bin/birdsAgainstMortality", "start"]
