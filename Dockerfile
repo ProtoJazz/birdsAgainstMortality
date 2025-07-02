@@ -81,7 +81,9 @@ RUN apt-get update -y && apt-get install -y \
 
 # Generate UTF-8 locale
 RUN sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && locale-gen
-
+COPY migrate.sh ./
+RUN chmod +x /app/migrate.sh
+COPY --from=build --chown=app:app /app/migrate.sh ./
 WORKDIR /app
 RUN useradd --system --create-home --shell /bin/bash app
 RUN chown app:app /app
