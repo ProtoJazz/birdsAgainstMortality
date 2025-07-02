@@ -1,4 +1,7 @@
 defmodule BirdsAgainstMortality.Release do
+  @moduledoc """
+  Used for executing DB release tasks when run in production without Mix installed.
+  """
   @app :birdsAgainstMortality
 
   def migrate do
@@ -6,6 +9,17 @@ defmodule BirdsAgainstMortality.Release do
 
     for repo <- repos() do
       {:ok, _, _} = Ecto.Migrator.with_repo(repo, &Ecto.Migrator.run(&1, :up, all: true))
+    end
+  end
+
+  def seed do
+    load_app()
+
+    # Run the seed file
+    seed_script = Path.join([:code.priv_dir(@app), "repo", "seeds.exs"])
+
+    if File.exists?(seed_script) do
+      Code.eval_file(seed_script)
     end
   end
 
