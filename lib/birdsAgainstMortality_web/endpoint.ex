@@ -14,12 +14,16 @@ defmodule BirdsAgainstMortalityWeb.Endpoint do
     websocket: true,
     longpoll: false
 
-  socket "/live", Phoenix.LiveView.Socket, websocket: [connect_info: [session: @session_options],     check_origin: false]
+  # Updated LiveView socket with more explicit WebSocket config
+  socket "/live", Phoenix.LiveView.Socket,
+    websocket: [
+      connect_info: [session: @session_options],
+      check_origin: false,  # Temporarily disable for testing
+      timeout: 45_000,
+      transport_log: :debug  # Add logging to see what's happening
+    ]
 
   # Serve at "/" the static files from "priv/static" directory.
-  #
-  # You should set gzip to true if you are running phx.digest
-  # when deploying your static files in production.
   plug Plug.Static,
     at: "/",
     from: :birdsAgainstMortality,
