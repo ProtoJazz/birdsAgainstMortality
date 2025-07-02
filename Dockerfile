@@ -49,9 +49,21 @@ RUN mix phx.digest
 # Compile and build release
 COPY lib lib
 
-# Remove the rel/config.exs creation since you have releases config in mix.exs
-# Just compile and build release directly
+# Debug: Check what's in the config directory
+RUN echo "=== Config files before release ===" && ls -la config/
+
+# Compile and build release
 RUN mix do compile, release birds_against_mortality
+
+# Debug: Check what's in the release directory
+RUN echo "=== Release structure ===" && find _build/prod/rel/birds_against_mortality -name "*.exs" -o -name "*.ex" | head -20
+
+# Check if there's a runtime.exs file being generated
+RUN if [ -f "_build/prod/rel/birds_against_mortality/releases/0.1.0/runtime.exs" ]; then \
+    echo "=== Found runtime.exs, contents: ===" && \
+    cat _build/prod/rel/birds_against_mortality/releases/0.1.0/runtime.exs; \
+    else echo "=== No runtime.exs found ==="; \
+    fi
 
 # App stage - using Debian slim for compatibility
 FROM debian:bullseye-slim AS app
