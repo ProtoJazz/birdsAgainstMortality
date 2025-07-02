@@ -14,7 +14,7 @@ defmodule BirdsAgainstMortalityWeb.Endpoint do
     websocket: true,
     longpoll: false
 
-  socket "/live", Phoenix.LiveView.Socket, websocket: [connect_info: [session: @session_options]]
+  socket "/live", Phoenix.LiveView.Socket, websocket: [connect_info: [session: @session_options],     check_origin: false]
 
   # Serve at "/" the static files from "priv/static" directory.
   #
