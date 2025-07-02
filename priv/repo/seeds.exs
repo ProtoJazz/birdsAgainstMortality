@@ -1,14 +1,6 @@
 # Script for populating the database. You can run it as:
 #
 #     mix run priv/repo/seeds.exs
-#
-# Inside the script, you can read and write to any of your
-# repositories directly:
-#
-#     BirdsAgainstMortality.Repo.insert!(%BirdsAgainstMortality.SomeSchema{})
-#
-# We recommend using the bang functions (`insert!`, `update!`
-# and so on) as they will fail if something goes wrong.
 
 alias BirdsAgainstMortality.{Repo, Cards.Deck}
 
@@ -33,9 +25,14 @@ create_deck_if_not_exists = fn deck_attrs, identifier ->
   # Use the first white card as a unique identifier
   first_white_card = List.first(deck_attrs.white_cards)
 
-  case Repo.get_by(Deck, []) |> Repo.all() |> Enum.find(fn deck ->
-    deck.white_cards && List.first(deck.white_cards) == first_white_card
-  end) do
+  # Fixed: Get all decks first, then find the one with matching first white card
+  existing_deck = Deck
+    |> Repo.all()
+    |> Enum.find(fn deck ->
+      deck.white_cards && List.first(deck.white_cards) == first_white_card
+    end)
+
+  case existing_deck do
     nil ->
       IO.puts("Creating deck with identifier: #{identifier}")
       %Deck{}
