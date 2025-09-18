@@ -1,5 +1,5 @@
 # Build stage - using a newer Elixir image
-FROM elixir:1.15-otp-26 AS build
+FROM elixir:1.13-otp-24 AS build
 
 # Set locale to avoid UTF-8 issues
 ENV LANG=C.UTF-8
@@ -12,6 +12,8 @@ RUN apt-get update -y && apt-get install -y \
     npm \
     git \
     locales \
+    erlang-dev \
+    erlang-public-key \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Generate UTF-8 locale
