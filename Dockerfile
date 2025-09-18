@@ -1,5 +1,5 @@
-# Build stage - using a Debian-based image for better compatibility
-FROM elixir:1.11 AS build
+# Build stage - using a newer Elixir image
+FROM elixir:1.15-otp-26 AS build
 
 # Set locale to avoid UTF-8 issues
 ENV LANG=C.UTF-8
@@ -12,7 +12,7 @@ RUN apt-get update -y && apt-get install -y \
     npm \
     git \
     locales \
-    && apt-get clean && rm -f /var/lib/apt/lists/*_*
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Generate UTF-8 locale
 RUN sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && locale-gen
@@ -53,8 +53,8 @@ COPY migrate.sh ./
 # Compile and build release
 RUN mix do compile, release birds_against_mortality
 
-# App stage - using Debian slim for compatibility
-FROM debian:bullseye-slim AS app
+# App stage - using Debian bookworm slim for compatibility
+FROM debian:bookworm-slim AS app
 
 # Set locale for runtime as well
 ENV LANG=C.UTF-8
