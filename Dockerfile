@@ -1,4 +1,4 @@
-# Build stage - using a newer Elixir image
+# Build stage - using Elixir 1.13 with OTP 24
 FROM elixir:1.13-otp-24 AS build
 
 # Set locale to avoid UTF-8 issues
@@ -12,8 +12,6 @@ RUN apt-get update -y && apt-get install -y \
     npm \
     git \
     locales \
-    erlang-dev \
-    erlang-public-key \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Generate UTF-8 locale
@@ -55,14 +53,14 @@ COPY migrate.sh ./
 # Compile and build release
 RUN mix do compile, release birds_against_mortality
 
-# App stage - using Debian bookworm slim for compatibility
-FROM debian:bookworm-slim AS app
+# App stage - using the same base OS as the build stage for compatibility
+FROM debian:bullseye-slim AS app
 
 # Set locale for runtime as well
 ENV LANG=C.UTF-8
 ENV LC_ALL=C.UTF-8
 
-# Install runtime dependencies
+# Install runtime dependencies - ensuring OpenSSL compatibility
 RUN apt-get update -y && apt-get install -y \
     openssl \
     ca-certificates \
