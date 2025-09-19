@@ -33,3 +33,6 @@ config :birdsAgainstMortality, BirdsAgainstMortalityWeb.Endpoint,
   ],
   secret_key_base: secret_key_base,
   check_origin: false  # Temporarily disable for testing
+
+
+config :birdsAgainstMortality, :basic_auth, username: System.get_env("ITEM_IMPORT_USERNAME"), password: System.get_env("ITEM_IMPORT_PASSWORD")
