@@ -1,5 +1,5 @@
-# Build stage - using Elixir 1.12 with OTP 23 for crypto compatibility
-FROM elixir:1.12-otp-23 AS build
+# Build stage - using Elixir 1.11 with OTP 22 for maximum compatibility
+FROM elixir:1.11-otp-22 AS build
 
 # Set locale to avoid UTF-8 issues
 ENV LANG=C.UTF-8
