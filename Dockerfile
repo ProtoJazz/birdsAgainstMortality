@@ -1,5 +1,5 @@
-# Build stage - using much older version for crypto compatibility
-FROM hexpm/elixir:1.11.4-erlang-23.3.4.18-debian-bullseye-20210902-slim AS build
+# Build stage - using available Elixir 1.11 with older OTP for crypto compatibility
+FROM hexpm/elixir:1.11.1-erlang-22.0.3-debian-bullseye-20210902-slim AS build
 
 # Set locale to avoid UTF-8 issues
 ENV LANG=C.UTF-8
