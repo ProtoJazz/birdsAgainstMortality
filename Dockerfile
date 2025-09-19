@@ -1,5 +1,5 @@
-# Build stage - using Elixir 1.11 with OTP 22 for maximum compatibility
-FROM elixir:1.11-otp-22 AS build
+# Build stage - using hexpm images which are better maintained
+FROM hexpm/elixir:1.12.3-erlang-24.3.4.2-debian-bullseye-20210902-slim AS build
 
 # Set locale to avoid UTF-8 issues
 ENV LANG=C.UTF-8
